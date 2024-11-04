@@ -1,0 +1,52 @@
+!-- templates/notas/alunos_serie.html -->
+{% extends 'base.html' %}
+
+{% block title %}Alunos - {{ serie.nome }}{% endblock %}
+
+{% block content %}
+<h2>{{ serie.nome }} - Notas dos Alunos</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Aluno</th>
+                <th>Matéria</th>
+                <th>1º Bim</th>
+                <th>2º Bim</th>
+                <th>3º Bim</th>
+                <th>4º Bim</th>
+                <th>Média Final</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aluno in alunos %}
+                {% for materia in serie.materias.all %}
+                    <tr>
+                        <td>{{ aluno.nome }}</td>
+                        <td>{{ materia.nome }}</td>
+                        {% for bim in '1234'|make_list %}
+                            <td>
+                                <input type="number" 
+                                       name="nota_{{ aluno.id }}_{{ materia.id }}_{{ bim }}"
+                                       value="{{ notas|get_nota:aluno,materia,bim }}"
+                                       step="0.1"
+                                       min="0"
+                                       max="10"
+                                       {% if user.tipo_usuario != 'PROFESSOR' %}disabled{% endif %}>
+                            </td>
+                        {% endfor %}
+                        <td>{{ notas|calc_media:aluno,materia }}</td>
+                        <td>{{ notas|get_status:aluno,materia }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if user.tipo_usuario == 'PROFESSOR' %}
+        <button type="submit" class="btn btn-primary">Salvar Notas</button>
+    {% endif %}
+</form>
+{% endblock %}

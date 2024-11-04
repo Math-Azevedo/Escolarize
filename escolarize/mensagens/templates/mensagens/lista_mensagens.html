@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Mensagens</title>
+</head>
+<body>
+    <h1>Mensagens</h1>
+    <ul>
+        {% for mensagem in mensagens %}
+            <li>
+                <h2>{{ mensagem.titulo }}</h2>
+                <p>{{ mensagem.conteudo }}</p>
+                <small>Data: {{ mensagem.data_criacao }}</small>
+            </li>
+        {% empty %}
+            <p>Nenhuma mensagem disponível.</p>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!--{# cadastro_professor.html #}-->
+{% extends 'navbar.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Cadastro de Professor</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Dados do Usuário</h4>
+                {{ usuario_form.as_p }}
+            </div>
+            <div class="col-md-6">
+                <h4>Dados do Professor</h4>
+                {{ professor_form.as_p }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+    </form>
+</div>
+{% endblock %}

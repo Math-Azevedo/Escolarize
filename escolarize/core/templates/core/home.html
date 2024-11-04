@@ -1,0 +1,82 @@
+<!-- core/templates/core/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Bem-vindo ao Escolarize</h1>
+            
+            {% if user.is_superuser %}
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Cadastrar Usuários</h5>
+                                <p class="card-text">Adicione novos professores, alunos ou responsáveis ao sistema.</p>
+                                <a href="{% url 'usuarios:cadastro' %}" class="btn btn-primary">Cadastrar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif user.is_professor %}
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Minhas Séries</h5>
+                                <p class="card-text">Visualize e gerencie as séries sob sua responsabilidade.</p>
+                                <a href="{% url 'notas:lista_series' %}" class="btn btn-primary">Ver Séries</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Mensagens</h5>
+                                <p class="card-text">Comunique-se com os responsáveis dos alunos.</p>
+                                <a href="{% url 'mensagens:lista_mensagens' %}" class="btn btn-primary">Ver Mensagens</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif user.is_aluno %}
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Meu Histórico</h5>
+                                <p class="card-text">Visualize suas notas e desempenho escolar.</p>
+                                <a href="{% url 'notas:historico' %}" class="btn btn-primary">Ver Histórico</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% elif user.is_responsavel  %}
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Histórico do Aluno</h5>
+                                <p class="card-text">Acompanhe o desempenho escolar do seu filho.</p>
+                                <a href="{% url 'notas:historico' %}" class="btn btn-primary">Ver Histórico</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Mensagens</h5>
+                                <p class="card-text">Comunique-se com os professores.</p>
+                                <a href="{% url 'mensagens:lista_mensagens' %}" class="btn btn-primary">Ver Mensagens</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

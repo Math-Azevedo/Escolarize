@@ -1,0 +1,30 @@
+{% extends 'base.html' %} <!-- If you have a base template -->
+
+{% block login %}
+<div class="login-form">
+    <h2>Login</h2>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- usuarios/templates/usuarios/login.html -->
+    <form method="post">
+        {% csrf_token %}
+        <label for="username">Usuário:</label>
+        <input type="text" name="username" required>
+
+        <label for="password">Senha:</label>
+        <input type="password" name="password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+<!-- notas/templates/notas/lancar_notas.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Lançar Notas - {{ serie.nome }}</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <form method="POST">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Aluno</th>
+                    <th>Disciplina</th>
+                    <th>1º Bimestre</th>
+                    <th>2º Bimestre</th>
+                    <th>3º Bimestre</th>
+                    <th>4º Bimestre</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aluno in alunos %}
+                    {% for disciplina in disciplinas %}
+                        <tr>
+                            <td>{{ aluno.nome }}</td>
+                            <td>{{ disciplina.nome }}</td>
+                            <td>
+                                <input type="number" step="0.1" min="0" max="10" 
+                                       name="nota1_{{ aluno.id }}_{{ disciplina.id }}"
+                                       value="{{ notas|get_item:aluno.id,disciplina.id|default:'0'|get_nota1 }}"
+                                       class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" step="0.1" min="0" max="10" 
+                                       name="nota2_{{ aluno.id }}_{{ disciplina.id }}"
+                                       value="{{ notas|get_item:aluno.id,disciplina.id|default:'0'|get_nota2 }}"
+                                       class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" step="0.1" min="0" max="10" 
+                                       name="nota3_{{ aluno.id }}_{{ disciplina.id }}"
+                                       value="{{ notas|get_item:aluno.id,disciplina.id|default:'0'|get_nota3 }}"
+                                       class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" step="0.1" min="0" max="10" 
+                                       name="nota4_{{ aluno.id }}_{{ disciplina.id }}"
+                                       value="{{ notas|get_item:aluno.id,disciplina.id|default:'0'|get_nota4 }}"
+                                       class="form-control">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <button type="submit" class="btn btn-primary">Salvar Notas</button>
+    </form>
+</div>
+{% endblock %}
