@@ -1,22 +1,38 @@
-<!-- core/templates/core/home.html -->
-{% extends 'base.html' %}
-
+<!-- home.html -->
+{% extends 'navbar.html' %}
 {% block title %}Dashboard{% endblock %}
+{% block home %}
 
-{% block content %}
 <div class="container">
     <div class="row">
         <div class="col-12">
             <h1 class="mb-4">Bem-vindo ao Escolarize</h1>
-            
             {% if user.is_superuser %}
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Cadastrar Usuários</h5>
-                                <p class="card-text">Adicione novos professores, alunos ou responsáveis ao sistema.</p>
-                                <a href="{% url 'usuarios:cadastro' %}" class="btn btn-primary">Cadastrar</a>
+                                <h5 class="card-title">Cadastrar Professor</h5>
+                                <p class="card-text">Adicione novos professores ao sistema.</p>
+                                <a href="{% url 'usuarios:cadastro_professor' %}" class="btn btn-primary">Cadastrar Professor</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Cadastrar Aluno</h5>
+                                <p class="card-text">Adicione novos alunos ao sistema.</p>
+                                <a href="{% url 'usuarios:cadastro_aluno' %}" class="btn btn-primary">Cadastrar Aluno</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Cadastrar Responsável</h5>
+                                <p class="card-text">Adicione novos responsáveis ao sistema.</p>
+                                <a href="{% url 'usuarios:cadastro_responsavel' %}" class="btn btn-primary">Cadastrar Responsável</a>
                             </div>
                         </div>
                     </div>
@@ -54,7 +70,7 @@
                         </div>
                     </div>
                 </div>
-            {% elif user.is_responsavel  %}
+            {% elif user.is_responsavel %}
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <div class="card">

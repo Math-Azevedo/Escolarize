@@ -64,6 +64,10 @@ def cadastrar_aluno(request):
     return render(request, 'cadastro_aluno.html', context)
 
 def cadastrar_professor(request):
+    if not request.user.is_superuser:
+        messages.error(request, 'Você não tem permissão para acessar esta página.')
+        return redirect('home')
+    
     if request.method == 'POST':
         try:
             usuario_form = UsuarioForm(request.POST)
@@ -81,7 +85,7 @@ def cadastrar_professor(request):
                 professor_form.save_m2m()
 
                 messages.success(request, 'Professor cadastrado com sucesso!')
-                return redirect('login')
+                return redirect('home')
             else:
                 messages.warning(request, 'Por favor, corrija os erros abaixo.')
         except Exception as e:
@@ -94,7 +98,7 @@ def cadastrar_professor(request):
         'usuario_form': usuario_form,
         'professor_form': professor_form
     }
-    return render(request, 'cadastro_professor.html', context)
+    return render(request, 'usuarios/cadastro_professor.html', context)
 
 def cadastrar_responsavel(request):
     if request.method == 'POST':
