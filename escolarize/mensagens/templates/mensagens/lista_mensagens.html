@@ -6,6 +6,14 @@
 </head>
 <body>
     <h1>Mensagens</h1>
+
+    <!-- Verifica se o usuário é um responsável -->
+    {% if user.is_authenticated and user.is_responsavel %}
+        <div style="margin-bottom: 20px;">
+            <a href="{% url 'mensagens:nova_mensagem' %}" class="btn btn-primary">Nova Mensagem</a>
+        </div>
+    {% endif %}
+
     <ul>
         {% for mensagem in mensagens %}
             <li>

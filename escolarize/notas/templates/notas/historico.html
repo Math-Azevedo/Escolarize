@@ -1,65 +1,21 @@
-<!-- notas/templates/notas/historico.html -->
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Histórico Escolar - {{ user.get_full_name }}</h2>
-    
-    {% if not historico %}
-        <div class="alert alert-info">
-            Nenhuma nota registrada ainda.
-        </div>
-    {% endif %}
-    
-    {% for ano, disciplinas in historico.items %}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h3 class="card-title">Ano: {{ ano }}</h3>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Disciplina</th>
-                                <th>1º Bimestre</th>
-                                <th>2º Bimestre</th>
-                                <th>3º Bimestre</th>
-                                <th>4º Bimestre</th>
-                                <th>Média Final</th>
-                                <th>Situação</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for disciplina, notas in disciplinas.items %}
-                                <tr>
-                                    <td>{{ disciplina }}</td>
-                                    {% for bim in '1234'|make_list %}
-                                        <td>
-                                            {% for nota in notas %}
-                                                {% if nota.bimestre == bim|add:"0" %}
-                                                    {{ nota.valor }}
-                                                {% endif %}
-                                            {% endfor %}
-                                        </td>
-                                    {% endfor %}
-                                    <td>{{ medias|get:ano|get:disciplina }}</td>
-                                    <td>
-                                        {% with media=medias|get:ano|get:disciplina %}
-                                            {% if media >= 7 %}
-                                                <span class="badge bg-success">Aprovado</span>
-                                            {% else %}
-                                                <span class="badge bg-danger">Reprovado</span>
-                                            {% endif %}
-                                        {% endwith %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <h1>Histórico de Notas</h1>
+
+    {% for ano, materias in medias_por_ano.items %}
+        <h2>Ano: {{ ano }}</h2>
+        <table>
+            <tr>
+                <th>Matéria</th>
+                <th>Média</th>
+            </tr>
+            {% for materia, media in materias.items %}
+                <tr>
+                    <td>{{ materia }}</td>
+                    <td>{{ media }}</td>
+                </tr>
+            {% endfor %}
+        </table>
     {% endfor %}
-</div>
 {% endblock %}

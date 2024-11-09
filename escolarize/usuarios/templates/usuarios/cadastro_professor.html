@@ -1,7 +1,7 @@
-{% extends 'navbar.html' %}
+{% extends 'base.html' %}
 {% load filtros %}
 
-{% block home %}
+{% block forms %}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-12">
@@ -10,6 +10,7 @@
                     <h2 class="mb-0 text-center">Cadastro de Professor</h2>
                 </div>
                 <div class="card-body">
+                    <!-- Exibir mensagens de sucesso ou erro -->
                     {% if messages %}
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -19,16 +20,17 @@
                         {% endfor %}
                     {% endif %}
 
-                    <form method="post" class="needs-validation" novalidate>
+                    <!-- Formulário de cadastro -->
+                    <form method="POST" class="needs-validation" novalidate>
                         {% csrf_token %}
                         <div class="row g-4">
-                            <!-- Dados do Usuário -->
+                            <!-- Dados de Acesso -->
                             <div class="col-md-6">
                                 <div class="card h-100">
                                     <div class="card-header bg-light">
                                         <h4 class="mb-0">
                                             <i class="fas fa-user me-2"></i>
-                                            Dados do Usuário
+                                            Dados de Acesso
                                         </h4>
                                     </div>
                                     <div class="card-body">
@@ -51,12 +53,12 @@
                                 </div>
                             </div>
 
-                            <!-- Dados do Professor -->
+                            <!-- Dados Pessoais do Professor -->
                             <div class="col-md-6">
                                 <div class="card h-100">
                                     <div class="card-header bg-light">
                                         <h4 class="mb-0">
-                                            <i class="fas fa-chalkboard-teacher me-2"></i>
+                                            <i class="fas fa-id-card me-2"></i>
                                             Dados do Professor
                                         </h4>
                                     </div>
@@ -100,42 +102,4 @@
         </div>
     </div>
 </div>
-
-<!-- Estilos Adicionais -->
-<style>
-    .card {
-        border-radius: 10px;
-        border: none;
-    }
-    
-    .card-header {
-        border-radius: 10px 10px 0 0 !important;
-    }
-    
-    .form-control {
-        border-radius: 8px;
-        padding: 10px 15px;
-    }
-    
-    .form-control:focus {
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-    }
-    
-    .btn {
-        border-radius: 8px;
-        padding: 10px 25px;
-    }
-    
-    .alert {
-        border-radius: 8px;
-    }
-    
-    /* Animação suave para hover nos botões */
-    .btn:hover {
-        transform: translateY(-1px);
-        transition: all 0.2s;
-    }
-</style>
-
-
 {% endblock %}

@@ -14,6 +14,11 @@ class Usuario(AbstractUser):
     )
     tipo_usuario = models.CharField(max_length=20, choices=TIPOS_USUARIO)
     telefone = models.CharField(max_length=15, blank=True)
+    
+    # Campos booleanos para indicar o tipo de usuário
+    is_responsavel = models.BooleanField(default=False)
+    is_aluno = models.BooleanField(default=False)
+    is_professor = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
@@ -30,10 +35,8 @@ class Professor(models.Model):
         return self.usuario.get_full_name()
 
 class Responsavel(models.Model):
-    usuario = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
+    # Altere para usar o modelo de usuário configurado em settings.py
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     cpf = models.CharField(max_length=14, unique=True)
     telefone = models.CharField(max_length=15)

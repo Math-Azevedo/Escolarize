@@ -1,15 +1,26 @@
 # usuarios/forms.py
 from django import forms
+from django.core.exceptions import ValidationError
 from .models import Usuario, Aluno, Professor, Responsavel, Materia
 from notas.models import Disciplina
+from django.contrib.auth.models import User
 
 class UsuarioForm(forms.ModelForm):
-    password1 = forms.CharField(label='Senha', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirmar senha', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Senha', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(label='Confirmar senha', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Usuario
-        fields = ['username', 'first_name', 'last_name', 'email', 'tipo_usuario', 'telefone']
+        fields = ['username', 'first_name', 'last_name', 'email', 'telefone']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
         
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -17,6 +28,15 @@ class UsuarioForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("As senhas não conferem")
         return password2
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if not password1 or not password2:
+            raise ValidationError("Por favor, preencha ambos os campos de senha")
+        return cleaned_data
 
 class AlunoForm(forms.ModelForm):
     class Meta:
@@ -48,19 +68,9 @@ class ProfessorForm(forms.ModelForm):
         return professor
 
 class ResponsavelForm(forms.ModelForm):
-    cpf = forms.CharField(
-        label='CPF',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '000.000.000-00'})
-    )
-    telefone = forms.CharField(
-        label='Telefone',
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(00) 00000-0000'})
-    )
-    data_nascimento = forms.DateField(
-        label='Data de Nascimento',
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
-    )
-
     class Meta:
         model = Responsavel
-        fields = ('cpf', 'telefone', 'endereco', 'data_nascimento', 'sexo')
+        fields = ['cpf', 'telefone', 'endereco', 'data_nascimento', 'sexo']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

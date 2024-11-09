@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'usuarios.apps.UsuariosConfig',
     'notas.apps.NotasConfig',
     'mensagens.apps.MensagensConfig',
+    'widget_tweaks',
 
 ]
 
