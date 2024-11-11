@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Histórico de Notas</h1>
+
+    {% for ano, materias in medias_por_ano.items %}
+        <h2>Ano: {{ ano }}</h2>
+        <table>
+            <tr>
+                <th>Matéria</th>
+                <th>Média</th>
+            </tr>
+            {% for materia, media in materias.items %}
+                <tr>
+                    <td>{{ materia }}</td>
+                    <td>{{ media }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+{% endblock %}

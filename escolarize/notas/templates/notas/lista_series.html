@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Séries Vinculadas ao Professor</h2>
+<ul>
+    {% for serie in series %}
+        <li>{{ serie.nome }}</li>
+    {% empty %}
+        <li>Nenhuma série vinculada.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
