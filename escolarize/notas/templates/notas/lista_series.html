@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h2>Séries Vinculadas ao Professor</h2>
-<ul>
+{% block forms %}
+  <h1>Minhas Séries</h1>
+
+  <ul>
     {% for serie in series %}
-        <li>{{ serie.nome }}</li>
+      <li><a href="{% url 'notas:alunos_serie' serie.id %}">{{ serie.nome }}</a></li>  <!-- Link para a página de alunos da série -->
     {% empty %}
-        <li>Nenhuma série vinculada.</li>
+      <li>Você não está associado a nenhuma série.</li>
     {% endfor %}
-</ul>
+  </ul>
 {% endblock %}
+

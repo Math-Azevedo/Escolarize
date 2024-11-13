@@ -14,3 +14,8 @@ def add_class(value, class_name):
 def get_item(dictionary, key):
     """Retorna um item de um dicionário"""
     return dictionary.get(key)
+
+@register.filter
+def my_custom_filter(value):
+    # lógica do filtro
+    return value

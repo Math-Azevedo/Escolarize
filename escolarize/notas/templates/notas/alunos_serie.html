@@ -1,52 +1,41 @@
-!-- templates/notas/alunos_serie.html -->
 {% extends 'base.html' %}
+{% load custom_filters %}
 
 {% block title %}Alunos - {{ serie.nome }}{% endblock %}
 
-{% block content %}
+{% block form %}
 <h2>{{ serie.nome }} - Notas dos Alunos</h2>
 
-<form method="post">
+<form method="POST">
     {% csrf_token %}
-    <table class="table table-striped">
+    <table>
         <thead>
             <tr>
                 <th>Aluno</th>
                 <th>Matéria</th>
-                <th>1º Bim</th>
-                <th>2º Bim</th>
-                <th>3º Bim</th>
-                <th>4º Bim</th>
-                <th>Média Final</th>
                 <th>Status</th>
             </tr>
         </thead>
         <tbody>
-            {% for aluno in alunos %}
-                {% for materia in serie.materias.all %}
-                    <tr>
-                        <td>{{ aluno.nome }}</td>
+            {% for aluno in alunos_com_notas %}
+                <tr>
+                        {% for item in aluno.notas_materias %}
+                        <td>{{ aluno.aluno.nome }}</td>
                         <td>{{ materia.nome }}</td>
-                        {% for bim in '1234'|make_list %}
-                            <td>
-                                <input type="number" 
-                                       name="nota_{{ aluno.id }}_{{ materia.id }}_{{ bim }}"
-                                       value="{{ notas|get_nota:aluno,materia,bim }}"
-                                       step="0.1"
-                                       min="0"
-                                       max="10"
-                                       {% if user.tipo_usuario != 'PROFESSOR' %}disabled{% endif %}>
-                            </td>
+                        <td>{{ nota_values.nota_1bimestre }}</td>
+                        <td>{{ nota_values.nota_2bimestre }}</td>
+                        <td>{{ nota_values.nota_3bimestre }}</td>
+                        <td>{{ nota_values.nota_4bimestre }}</td>
+                        <td>{{ nota_values.media|default:"-" }}</td>
+                        <td>{{ nota.status|default:"Não calculado" }}</td>
                         {% endfor %}
-                        <td>{{ notas|calc_media:aluno,materia }}</td>
-                        <td>{{ notas|get_status:aluno,materia }}</td>
-                    </tr>
-                {% endfor %}
+                </tr>
             {% endfor %}
         </tbody>
     </table>
+    
     {% if user.tipo_usuario == 'PROFESSOR' %}
-        <button type="submit" class="btn btn-primary">Salvar Notas</button>
+    <button type="submit" class="btn btn-primary">Salvar Notas</button>
     {% endif %}
 </form>
 {% endblock %}

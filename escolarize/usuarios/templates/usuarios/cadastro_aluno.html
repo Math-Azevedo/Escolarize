@@ -43,7 +43,9 @@
                                                     {% endif %}
                                                 </label>
                                                 {{ field.errors }}
-                                                {{ field|add_class:"form-control" }}
+                                                <div>
+                                                    {{ field }}
+                                                </div>
                                                 {% if field.help_text %}
                                                     <small class="form-text text-muted">{{ field.help_text }}</small>
                                                 {% endif %}
@@ -72,13 +74,49 @@
                                                     {% endif %}
                                                 </label>
                                                 {{ field.errors }}
-                                                {{ field|add_class:"form-control" }}
+                                                <div>
+                                                    {{ field|add_class:"form-control" }}
+                                                </div>
                                                 {% if field.help_text %}
                                                     <small class="form-text text-muted">{{ field.help_text }}</small>
                                                 {% endif %}
                                             </div>
                                         {% endfor %}
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seleção de Série e Matérias -->
+                        <div class="row g-4 mt-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ aluno_form.serie.id_for_label }}" class="form-label">
+                                        {{ aluno_form.serie.label }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    {{ aluno_form.serie.errors }}
+                                    <div>
+                                        {{ aluno_form.serie }}
+                                    </div>
+                                    {% if aluno_form.serie.help_text %}
+                                        <small class="form-text text-muted">{{ aluno_form.serie.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ aluno_form.materias.id_for_label }}" class="form-label">
+                                        {{ aluno_form.materias.label }}
+                                    </label>
+                                    {{ aluno_form.materias.errors }}
+                                    <div>
+                                        {{ aluno_form.materias }}
+                                    </div>
+                                    {% if aluno_form.materias.help_text %}
+                                        <small class="form-text text-muted">{{ aluno_form.materias.help_text }}</small>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

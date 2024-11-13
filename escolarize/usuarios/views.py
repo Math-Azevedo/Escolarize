@@ -1,13 +1,19 @@
+#usuaris/views.py
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout as django_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.db import transaction
 from django.urls import reverse
-from django.contrib.auth import logout as django_logout
-from .forms import UsuarioForm, AlunoForm, ProfessorForm, ResponsavelForm
-from .models import Usuario, Aluno, Professor, Responsavel
+from notas.models import Serie
+from .forms import AlunoForm, PaiMaeForm, UsuarioForm, AlunoUsuarioForm, ProfessorForm, ResponsavelForm
+from .models import PaiMae, Usuario, Aluno, Professor, Responsavel
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+
 
 def logout(request):
     django_logout(request)
@@ -31,49 +37,43 @@ def login_view(request):
 def cadastrar_aluno(request):
     if request.method == 'POST':
         usuario_form = UsuarioForm(request.POST)
-        aluno_form = AlunoForm(request.POST)
-
-        if usuario_form.is_valid() and aluno_form.is_valid():
-            try:
-                # Salvar usuário
-                usuario = usuario_form.save(commit=False)
-                usuario.tipo_usuario = 'ALUNO'
-                usuario.set_password(usuario_form.cleaned_data['password1'])
-                usuario.is_responsavel = False
-                usuario.is_aluno = True
-                usuario.is_professor = False
-                usuario.save()
-
-                # Salvar aluno
-                aluno = aluno_form.save(commit=False)
-                aluno.usuario = usuario
-                aluno.save()
-
-                # Mensagem de sucesso
-                messages.success(request, 'Aluno cadastrado com sucesso!')
-                
-                # Limpar formulários após o salvamento (mantendo a página de cadastro aberta)
-                usuario_form = UsuarioForm()  # formulário vazio
-                aluno_form = AlunoForm()  # formulário vazio
-
-                # Retornar para a mesma página com os formulários vazios
-                return render(request, 'usuarios/cadastro_aluno.html', {
-                    'usuario_form': usuario_form,
-                    'aluno_form': aluno_form
-                })
-            except Exception as e:
-                messages.warning(request, f'Erro ao criar aluno: {str(e)}')
+        aluno_form = AlunoUsuarioForm(request.POST)
+        
+        if aluno_form.is_valid():
+            aluno = aluno_form.save(commit=False)
+            pai_mae = aluno_form.cleaned_data['pai_mae']
+            aluno.pai_mae = pai_mae
+            aluno.save()
+            return redirect('sucesso')  # Redirecionar para a página de sucesso
         else:
-            messages.warning(request, 'Por favor, corrija os erros abaixo.')
+            return render(request, 'usuarios/cadastro_aluno.html', {'form': aluno_form})
     else:
         usuario_form = UsuarioForm()
+        aluno_form = AlunoUsuarioForm()
+
+    return render(request, 'usuarios/cadastro_aluno.html', {'usuario_form': usuario_form, 'form': aluno_form})
+
+def cadastrar_aluno(request):
+    if request.method == 'POST':
+        aluno_form = AlunoForm(request.POST)
+        if aluno_form.is_valid():
+            aluno = aluno_form.save()  # Salva o aluno
+            return redirect('sucesso')  # Redireciona para uma página de sucesso
+    else:
         aluno_form = AlunoForm()
 
-    return render(request, 'usuarios/cadastro_aluno.html', {
-        'usuario_form': usuario_form,
-        'aluno_form': aluno_form
-    })
+    return render(request, 'cadastro_aluno.html', {'aluno_form': aluno_form})
 
+def cadastrar_pai_mae(request):
+    if request.method == 'POST':
+        pai_mae_form = PaiMaeForm(request.POST)
+        if pai_mae_form.is_valid():
+            pai_mae = pai_mae_form.save()  # Salva o pai/mãe
+            return redirect('sucesso')
+    else:
+        pai_mae_form = PaiMaeForm()
+
+    return render(request, 'cadastro_pai_mae.html', {'pai_mae_form': pai_mae_form})
 
 def cadastrar_professor(request):
     if not request.user.is_superuser:
@@ -127,47 +127,33 @@ def cadastrar_professor(request):
 
 def cadastrar_responsavel(request):
     if request.method == 'POST':
-        user_form = UsuarioForm(request.POST)
+        usuario_form = UsuarioForm(request.POST)
         responsavel_form = ResponsavelForm(request.POST)
 
-        if user_form.is_valid() and responsavel_form.is_valid():
-            try:
-                with transaction.atomic():
-                    # Salvar usuário
-                    user = user_form.save(commit=False)
-                    user.set_password(user_form.cleaned_data['password1'])
-                    user.is_responsavel = True
-                    user.is_aluno = False
-                    user.is_professor = False
-                    user.save()
-
-                    # Salvar responsável
-                    responsavel = responsavel_form.save(commit=False)
-                    responsavel.usuario = user
-                    responsavel.save()
-
-                    # Fazer login do usuário
-                    login(request, user)
-                    messages.success(request, 'Cadastro realizado com sucesso!')
-                    
-                    # Limpar formulários após o salvamento
-                    user_form = UsuarioForm()  # formulário vazio
-                    responsavel_form = ResponsavelForm()  # formulário vazio
-
-                    # Retornar para a mesma página com os formulários vazios
-                    return render(request, 'usuarios/cadastro_responsavel.html', {
-                        'user_form': user_form,
-                        'responsavel_form': responsavel_form
-                    })
-            except Exception as e:
-                messages.error(request, f'Ocorreu um erro ao realizar o cadastro: {str(e)}')
+        
+        if usuario_form.is_valid() and responsavel_form.is_valid():
+            print('entrou')
+            usuario = usuario_form.save(commit=False)
+            
+            usuario.save()
+            responsavel = responsavel_form.save(commit=False)
+            responsavel.user = usuario  # Associa o usuário ao responsável
+            responsavel.save()  # Salva o responsável
+            
+            # Redireciona após salvar
+            return redirect('home')  
         else:
-            messages.warning(request, 'Por favor, corrija os erros abaixo.')
+            # Caso o formulário não seja válido, renderiza novamente com erros
+            return render(request, 'usuarios/cadastro_responsavel.html', {
+                'usuario_form': usuario_form,
+                'responsavel_form': responsavel_form
+            })
     else:
-        user_form = UsuarioForm()
+        # Caso GET
+        usuario_form = UsuarioForm()
         responsavel_form = ResponsavelForm()
 
     return render(request, 'usuarios/cadastro_responsavel.html', {
-        'user_form': user_form,
+        'usuario_form': usuario_form,
         'responsavel_form': responsavel_form
     })

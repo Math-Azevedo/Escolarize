@@ -11,5 +11,7 @@ urlpatterns = [
     path('professor/cadastro/', views.cadastrar_professor, name='cadastro_professor'),
     path('responsavel/cadastro/', views.cadastrar_responsavel, name='cadastro_responsavel'),
     path('logout/', views.logout, name='logout'),
+    path('cadastrar/aluno/', views.cadastrar_aluno, name='cadastrar_aluno'),
+    path('cadastrar/pai-mae/', views.cadastrar_pai_mae, name='cadastrar_pai_mae'),
     
 ]

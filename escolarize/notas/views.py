@@ -4,30 +4,68 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from usuarios.models import Aluno
-from .models import Serie, Nota, Disciplina
-from usuarios.models import Professor
+from usuarios.models import Aluno, Professor
+from notas.models import Nota
+from .models import AlunoMateria, Serie, Nota, Disciplina
 from django.http import Http404
+from django.forms import formset_factory
+from usuarios.forms import AlunoForm, PaiMaeForm, UsuarioForm, AlunoUsuarioForm, ProfessorForm, ResponsavelForm
 
 @login_required
 def lista_series(request):
-    if request.user.tipo_usuario == 'PROFESSOR':
-        series = Serie.objects.filter(professores=request.user.professor)
-    else:
-        series = []
+    # Obtemos o professor associado ao usuário logado
+    professor = get_object_or_404(Professor, usuario=request.user)
+    
+    # A partir daqui, você pode acessar as séries associadas ao professor
+    series = professor.series.all()
+
+    # Retorna o contexto com as séries associadas ao professor
     return render(request, 'notas/lista_series.html', {'series': series})
 
-@login_required
 def alunos_serie(request, serie_id):
-    serie = Serie.objects.get(id=serie_id)
-    alunos = serie.aluno_set.all()
-    notas = Nota.objects.filter(aluno__serie=serie)
-    context = {
+    serie = get_object_or_404(Serie, id=serie_id)
+    alunos = Aluno.objects.filter(serie=serie)
+
+    alunos_com_notas = []
+    for aluno in alunos:
+        notas_materias = []
+        for materia in serie.materias.all():
+
+            nota = Nota.objects.filter(aluno=aluno, materia=materia).first()
+
+            if nota:
+                print('Nota 1: ',nota.nota_1bimestre)
+                # Assegura valores numéricos para evitar erros de conversão
+                nota_values = {
+                    'nota_1bimestre': nota.nota_1bimestre or 0.0,
+                    'nota_2bimestre': nota.nota_2bimestre if nota.nota_2bimestre is not None else 0.0,
+                    'nota_3bimestre': nota.nota_3bimestre if nota.nota_3bimestre is not None else 0.0,
+                    'nota_4bimestre': nota.nota_4bimestre if nota.nota_4bimestre is not None else 0.0,
+                }
+                notas_materias.append({
+                    'materia': materia,
+                    'nota': nota,
+                    'nota_values': nota_values
+                })
+            else:
+                # Adiciona valores padrão caso o objeto nota não exista
+                notas_materias.append({
+                    'materia': materia,
+                    'nota': None,
+                    'nota_values': {
+                        'nota_1bimestre': 0.0,
+                        'nota_2bimestre': 0.0,
+                        'nota_3bimestre': 0.0,
+                        'nota_4bimestre': 0.0
+                    }
+                })
+
+    return render(request, 'notas/alunos_serie.html', {
         'serie': serie,
-        'alunos': alunos,
-        'notas': notas
-    }
-    return render(request, 'notas/alunos_serie.html', context)
+        'alunos_com_notas': alunos_com_notas,
+        'notas_materias':nota_values, 
+
+    })
 
 def series_view(request):
     # Verifica se o usuário logado é um professor
